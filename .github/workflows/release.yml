@@ -1,0 +1,137 @@
+name: Release
+
+# A release tag gets a GitHub release once CI has passed (ci.yml calls this). The tag
+# must agree with the version in CMakeLists.txt; the notes list the fixes and features
+# committed since the previous tag. The release carries cpplings built for Linux on
+# x86_64 and aarch64, with the C++ runtime linked in so it runs on older distributions.
+# Run by hand, it publishes a tag pushed before this workflow existed.
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to publish, such as v1.2.3
+        required: true
+
+permissions:
+  contents: read
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+
+jobs:
+  notes:
+    name: Check the version and write the notes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+          # The notes need the history back to the previous tag.
+          fetch-depth: 0
+      - name: Check the version and write the notes
+        run: |
+          mkdir -p notes
+          python3 - <<'EOF'
+          import os, re, subprocess, sys
+
+          tag = os.environ["TAG"]
+          with open("CMakeLists.txt") as f:
+              match = re.search(r"project\(cpplings VERSION ([0-9.]+)", f.read())
+          if not match or match.group(1) != tag.removeprefix("v"):
+              found = match.group(1) if match else "nothing"
+              sys.exit(f"The tag is {tag}, but CMakeLists.txt says {found}")
+
+          def git(*args):
+              return subprocess.run(["git", *args], capture_output=True, text=True).stdout.strip()
+
+          previous = git("describe", "--tags", "--abbrev=0", tag + "^")
+          span = f"{previous}..{tag}" if previous else tag
+          subjects = git("log", "--no-merges", "--format=%s", span).splitlines()
+          picked = [s for s in subjects if re.match(r"(feat|fix|perf)(\(.*\))?!?:", s)] or [
+              s for s in subjects if not re.match(r"(chore|ci)(\(.*\))?!?:", s)
+          ]
+          with open("notes/notes.md", "w") as f:
+              f.write("\n".join(f"- {s}" for s in picked) + "\n")
+          EOF
+      - uses: actions/upload-artifact@v4
+        with:
+          name: notes
+          path: notes/notes.md
+
+  build:
+    name: Build for ${{ matrix.arch }}
+    needs: notes
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - name: Install the toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends g++-14 cmake ninja-build
+      - name: Build
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-14 \
+            -DCMAKE_EXE_LINKER_FLAGS="-static-libstdc++ -static-libgcc"
+          cmake --build build
+          strip build/cpplings
+      - name: Check the binary
+        env:
+          CXX: g++-14
+        run: |
+          ./build/cpplings --version
+          cd "$RUNNER_TEMP"
+          echo | "$GITHUB_WORKSPACE/build/cpplings" init
+          cd cpplings
+          echo | "$GITHUB_WORKSPACE/build/cpplings" run intro1
+      - name: Package
+        run: |
+          dir="cpplings-${TAG#v}-${{ matrix.arch }}-linux"
+          mkdir -p "$dir" dist
+          cp build/cpplings LICENSE README.md "$dir/"
+          tar --sort=name --mtime="@$(git log -1 --format=%ct)" --owner=0 --group=0 --numeric-owner \
+            -czf "dist/$dir.tar.gz" "$dir"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.arch }}
+          path: dist/*
+
+  publish:
+    name: Publish the release
+    needs: [notes, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: notes
+          path: notes
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: "{x86_64,aarch64}"
+          merge-multiple: true
+      - name: Publish
+        run: |
+          cd dist
+          sha256sum * > SHA256SUMS
+          # A release that already exists keeps its notes, which may have been edited by hand.
+          if gh release view "$TAG" -R "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$TAG" -R "$GITHUB_REPOSITORY" --clobber *
+          else
+            gh release create "$TAG" -R "$GITHUB_REPOSITORY" --verify-tag --title "cpplings ${TAG#v}" \
+              --notes-file ../notes/notes.md *
+          fi
