@@ -24,6 +24,10 @@ that needs no runtime library.
 
 ## Installation
 
+Every [release](https://github.com/sachesi/cpplings/releases) has packages for
+Fedora, Debian, Ubuntu and Arch Linux, and a binary for any Linux distribution
+with glibc 2.39 or newer. To build it yourself:
+
 ```sh
 git clone https://github.com/sachesi/cpplings.git cpplings-src
 cd cpplings-src

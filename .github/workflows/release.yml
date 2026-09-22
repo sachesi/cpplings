@@ -3,8 +3,9 @@ name: Release
 # A release tag gets a GitHub release once CI has passed (ci.yml calls this). The tag
 # must agree with the version in CMakeLists.txt; the notes list the fixes and features
 # committed since the previous tag. The release carries cpplings built for Linux on
-# x86_64 and aarch64, with the C++ runtime linked in so it runs on older distributions.
-# Run by hand, it publishes a tag pushed before this workflow existed.
+# x86_64 and aarch64, with the C++ runtime linked in so it runs on older distributions,
+# and packages for Fedora, Debian, Ubuntu and Arch Linux. Run by hand, it publishes a
+# tag pushed before this workflow existed.
 on:
   workflow_call:
   workflow_dispatch:
@@ -106,9 +107,138 @@ jobs:
           name: ${{ matrix.arch }}
           path: dist/*
 
+  fedora:
+    name: Package for Fedora
+    needs: notes
+    runs-on: ubuntu-latest
+    container: registry.fedoraproject.org/fedora:44
+    steps:
+      - name: Install the tools
+        run: dnf install -y --setopt=install_weak_deps=False git-core rpm-build dnf-plugins-core
+      # The spec of this workflow's revision, which builds the tag's sources.
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          spec=packaging/fedora/cpplings.spec
+          sed -i "s/^Version:.*/Version:        ${TAG#v}/; s/^Release:.*/Release:        1%{?dist}/" "$spec"
+          dnf builddep -y --setopt=install_weak_deps=False "$spec"
+          # rpmbuild fetches Source0 from the tag into a directory it does not create itself.
+          mkdir -p rpmbuild/SOURCES
+          rpmbuild -bb --define "_topdir $PWD/rpmbuild" --define "_disable_source_fetch 0" "$spec"
+          mkdir dist
+          find rpmbuild/RPMS -name '*.rpm' ! -name '*-debuginfo-*' ! -name '*-debugsource-*' -exec mv -t dist {} +
+          # The dependencies resolve on the release it was built for.
+          dnf install -y dist/*.rpm
+          cpplings --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fedora
+          path: dist/*
+
+  debian:
+    name: Package for ${{ matrix.name }}
+    needs: notes
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Debian
+            image: debian:forky
+            artifact: debian
+            revision: "1"
+          - name: Ubuntu 26.04
+            image: ubuntu:26.04
+            artifact: ubuntu
+            revision: 1~ubuntu26.04
+    container: ${{ matrix.image }}
+    env:
+      REVISION: ${{ matrix.revision }}
+      DEBIAN_FRONTEND: noninteractive
+    defaults:
+      run:
+        # Not the image's sh, which is dash.
+        shell: bash
+    steps:
+      - name: Install the build dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends ca-certificates git dpkg-dev g++ cmake
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG }}
+      - name: Build
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
+          cmake --build build
+          DESTDIR="$PWD/stage" cmake --install build
+          install -Dm644 LICENSE stage/usr/share/doc/cpplings/copyright
+          install -Dm644 README.md -t stage/usr/share/doc/cpplings
+      - name: Package
+        run: |
+          strip --strip-unneeded stage/usr/bin/cpplings
+          # dpkg-shlibdeps wants a source package to belong to.
+          mkdir debian
+          printf 'Source: cpplings\n\nPackage: cpplings\nArchitecture: any\n' > debian/control
+          shlibs=$(dpkg-shlibdeps -O -e stage/usr/bin/cpplings | sed -n 's/^shlibs:Depends=//p')
+          arch=$(dpkg --print-architecture)
+          mkdir stage/DEBIAN
+          cat > stage/DEBIAN/control <<EOF
+          Package: cpplings
+          Version: ${TAG#v}-$REVISION
+          Architecture: $arch
+          Maintainer: sachesi <xsachesi@pm.me>
+          Installed-Size: $(du -sk stage | cut -f1)
+          Depends: $shlibs, g++
+          Section: devel
+          Priority: optional
+          Homepage: https://github.com/sachesi/cpplings
+          Description: Small exercises to get you used to reading and writing modern C++
+           cpplings is a collection of small C++23 exercises in the style of
+           Rustlings. Each exercise doesn't compile or fails its tests; you fix it in
+           your editor while cpplings watches the file, reruns it on every save and
+           moves you on once it passes.
+          EOF
+          mkdir dist
+          deb="dist/cpplings_${TAG#v}-${REVISION}_$arch.deb"
+          dpkg-deb --root-owner-group -Zxz --build stage "$deb"
+          # The dependencies resolve on the release it was built for.
+          apt-get install -y "./$deb"
+          cpplings --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/*
+
+  arch:
+    name: Package for Arch Linux
+    needs: notes
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      # The PKGBUILD of this workflow's revision, which builds the tag's sources.
+      - uses: actions/checkout@v4
+      - name: Build
+        run: |
+          pacman -Syu --noconfirm --needed git
+          useradd -m builder
+          install -d -o builder pkg
+          cp packaging/arch/PKGBUILD pkg/
+          sed -i "s/^pkgver=.*/pkgver=${TAG#v}/; s/^pkgrel=.*/pkgrel=1/" pkg/PKGBUILD
+          (source pkg/PKGBUILD && pacman -S --noconfirm --needed --asdeps "${depends[@]}" "${makedepends[@]}")
+          su builder -c 'cd pkg && makepkg --noconfirm'
+          mkdir dist && mv pkg/"cpplings-${TAG#v}"-1-*.pkg.tar.zst dist/
+          # The dependencies resolve on Arch as it is today.
+          pacman -U --noconfirm dist/*.pkg.tar.zst
+          cpplings --version
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arch
+          path: dist/*
+
   publish:
     name: Publish the release
-    needs: [notes, build]
+    needs: [notes, build, fedora, debian, arch]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -122,7 +252,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: dist
-          pattern: "{x86_64,aarch64}"
+          pattern: "{x86_64,aarch64,fedora,debian,ubuntu,arch}"
           merge-multiple: true
       - name: Publish
         run: |
