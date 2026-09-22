@@ -1,0 +1,1120 @@
+format_version = 1
+
+welcome_message = """
+Is this your first time? Don't worry, cpplings is made for beginners!
+We are going to teach you a lot of things about C++, but before we can
+get started, here are some notes about how cpplings operates:
+
+1. The central concept behind cpplings is that you solve exercises. These
+   exercises usually contain some compiler or logic errors which cause the
+   exercise to fail compilation or testing. It's your job to find all errors
+   and fix them!
+2. Make sure to have your editor open in the `cpplings/` directory. cpplings
+   will show you the path of the current exercise under the progress bar. Open
+   the exercise file in your editor, fix errors and save the file. cpplings
+   will automatically detect the file change and rerun the exercise. If all
+   errors are fixed, cpplings will ask you to move on to the next exercise.
+3. If you're stuck on an exercise, enter `h` to show a hint.
+4. The exercises are compiled with `c++` (set the CXX environment variable to
+   use another compiler) in C++23 mode with warnings, bounds-checked standard
+   containers and sanitizers where available. If you use clangd, it picks up
+   the compiler flags from the generated `compile_commands.json`."""
+
+final_message = """
+We hope you enjoyed learning about the various aspects of C++!
+Keep going: write small programs of your own, read code written by others and
+keep cppreference.com close at hand. https://en.cppreference.com/w/cpp"""
+
+# INTRO
+
+[[exercises]]
+name = "intro1"
+dir = "00_intro"
+skip_check_unsolved = true
+hint = """
+Enter `n` to move on to the next exercise.
+You might need to press ENTER after typing `n`."""
+
+[[exercises]]
+name = "intro2"
+dir = "00_intro"
+hint = """
+The compiler is informing us that `std::cout` wasn't declared. Every part of the
+standard library lives in a header that must be included first. The compiler
+also suggests which header provides `std::cout`."""
+
+# VARIABLES
+
+[[exercises]]
+name = "variables1"
+dir = "01_variables"
+hint = """
+A variable is declared by writing its type followed by its name: `int x = 5;`
+You can also let the compiler deduce the type with `auto x = 5;`"""
+
+[[exercises]]
+name = "variables2"
+dir = "01_variables"
+hint = """
+`auto` means "use the type of the initializer". Without an initializer, there is
+nothing to deduce the type from. Try `auto x = 10;` and then another value to see
+both branches of the `if`."""
+
+[[exercises]]
+name = "variables3"
+dir = "01_variables"
+hint = """
+`const` promises that the variable never changes after its initialization. The
+program assigns a new value later, so remove `const`."""
+
+[[exercises]]
+name = "variables4"
+dir = "01_variables"
+hint = """
+A variable declared inside `{ }` is destroyed at the closing brace. Declare `bonus`
+before the block, next to `attempts`, so it is still alive afterwards."""
+
+[[exercises]]
+name = "variables5"
+dir = "01_variables"
+hint = """
+Unlike some languages, C++ doesn't allow declaring the same name twice in one
+scope. But a nested block `{ ... }` opens a new scope where `number` can be
+declared again, hiding the outer variable until the block ends."""
+
+[[exercises]]
+name = "variables6"
+dir = "01_variables"
+hint = """
+Mark the function with `constexpr`:
+    constexpr int number_of_slots() { ... }
+Then the compiler is allowed to call it while compiling."""
+
+[[exercises]]
+name = "variables7"
+dir = "01_variables"
+hint = """
+`int` only holds whole numbers, so `19.99` would be truncated to `19`. With braces
+the compiler reports this "narrowing conversion" as an error. `double` holds
+floating-point numbers."""
+
+# FUNCTIONS
+
+[[exercises]]
+name = "functions1"
+dir = "02_functions"
+hint = """
+The function `main` calls a function named `call_me` which doesn't exist yet.
+Define it above `main`:
+    void call_me() {
+        // ...
+    }"""
+
+[[exercises]]
+name = "functions2"
+dir = "02_functions"
+hint = """
+Every parameter needs a type. `num` is used as a count in the loop, so an integer
+type like `int` fits."""
+
+[[exercises]]
+name = "functions3"
+dir = "02_functions"
+hint = """
+This time, the function *declaration* is okay, but there's something wrong with
+the place where the function is being called. `call_me` needs an `int`.
+Bonus: default arguments like `void call_me(int num = 3)` make the argument
+optional."""
+
+[[exercises]]
+name = "functions4"
+dir = "02_functions"
+hint = """
+The error message says that a type is missing. Every function declaration starts
+with its return type. The function returns a price, so `int` fits.
+`auto` also works: the compiler deduces the return type from the `return`
+statements."""
+
+[[exercises]]
+name = "functions5"
+dir = "02_functions"
+hint = """
+`num * num;` computes a value and throws it away. The function never returns
+anything, which is undefined behavior for a function declared to return `int`.
+cpplings compiles with the undefined behavior sanitizer, which stops the program.
+Use a `return` statement."""
+
+[[exercises]]
+name = "functions6"
+dir = "02_functions"
+hint = """
+Put a declaration of `greet` above `main`. It looks like the first line of the
+definition, ending with a semicolon instead of a body:
+    void greet(const char* name);"""
+
+# IF
+
+[[exercises]]
+name = "if1"
+dir = "03_if"
+hint = """
+Use an `if` statement to compare `a` and `b`, and `return` the bigger one. The
+compiler warns that the function doesn't return anything yet."""
+
+[[exercises]]
+name = "if2"
+dir = "03_if"
+hint = """
+First, `1` isn't a string, so it can't be converted to `std::string_view`. Then,
+look at the tests: "potato" needs its own branch. Use `else if`:
+    if (...) {
+        ...
+    } else if (...) {
+        ...
+    } else {
+        ...
+    }"""
+
+[[exercises]]
+name = "if3"
+dir = "03_if"
+hint = """
+In `condition ? a : b`, both `a` and `b` must have a common type. The last
+alternative is a string while the others are integers. Replace it with an
+integer that isn't handled by the `if` statements below, for example `4`."""
+
+[[exercises]]
+name = "switch1"
+dir = "03_if"
+hint = """
+Every `case` that should stop needs a `break;`. Without it, the program continues
+executing the statements of the next case ("fallthrough"). The compiler warns
+"this statement may fall through"."""
+
+[[exercises]]
+name = "quiz1"
+dir = "quizzes"
+hint = "No hints this time ;)"
+
+# PRIMITIVE TYPES
+
+[[exercises]]
+name = "primitive_types1"
+dir = "04_primitive_types"
+hint = """
+The negation of a `bool` is written with `!`:
+    bool is_evening = !is_morning;"""
+
+[[exercises]]
+name = "primitive_types2"
+dir = "04_primitive_types"
+hint = """
+Check whether `letter` is between 'a' and 'z' with `>=` and `<=`. The distance
+between a lowercase letter and 'a' is the same as between its uppercase version
+and 'A', so `letter - 'a' + 'A'` gives the uppercase letter.
+The arithmetic produces an `int`; convert it back with `static_cast<char>(...)`."""
+
+[[exercises]]
+name = "primitive_types3"
+dir = "04_primitive_types"
+hint = """
+There are several ways to create a C array with 100 elements:
+    int a[100];       // uninitialized values
+    int a[100] = {};  // all zero
+    int a[] = {1, 2, 3, ...};  // size taken from the list
+`std::size` returns the number of elements of an array."""
+
+[[exercises]]
+name = "primitive_types4"
+dir = "04_primitive_types"
+hint = """
+`a + b` and `2` are both integers, so the division is an integer division and
+the fractional part is dropped before the result is converted to `double`.
+Make one of the operands a floating-point number, e.g. `2.0` or
+`static_cast<double>(a + b)`."""
+
+[[exercises]]
+name = "primitive_types5"
+dir = "04_primitive_types"
+hint = """
+The compiler warns that the comparison is always true. An unsigned number is
+never negative: `20u - 30u` wraps around to a huge positive number. Compare the
+two values directly instead of subtracting."""
+
+[[exercises]]
+name = "primitive_types6"
+dir = "04_primitive_types"
+hint = """
+Overflowing a signed integer is undefined behavior, which the sanitizer catches.
+Include <cstdint> and use `std::int64_t` for the parameter and the return type.
+The multiplication then happens in 64 bits."""
+
+[[exercises]]
+name = "primitive_types7"
+dir = "04_primitive_types"
+hint = """
+A structured binding declares several variables at once from the members of a
+pair, tuple or struct:
+    auto [first, second] = some_pair;"""
+
+[[exercises]]
+name = "primitive_types8"
+dir = "04_primitive_types"
+hint = """
+Tuple elements are accessed with `std::get<INDEX>(tuple)`. The index goes between
+the angle brackets because it must be known at compile time."""
+
+# VECTORS
+
+[[exercises]]
+name = "vectors1"
+dir = "05_vectors"
+hint = """
+Both `std::array` and `std::vector` can be initialized from a braced list of
+values: `{10, 20, 30, 40}`. A vector can also be created from any range of
+elements, e.g. `std::vector<int> v(a.begin(), a.end());`."""
+
+[[exercises]]
+name = "vectors2"
+dir = "05_vectors"
+hint = """
+In the first function, use `output.push_back(...)` to append an element.
+
+In the second function, `auto element` is a copy of each element. Changing the
+copy doesn't change the vector. Use a reference instead: `auto& element`."""
+
+[[exercises]]
+name = "vectors3"
+dir = "05_vectors"
+hint = """
+A vector with 4 elements has the indices 0, 1, 2 and 3. The loop condition
+`i <= numbers.size()` also visits index 4. Use `<` instead, or avoid indices
+completely with a range-based for loop."""
+
+[[exercises]]
+name = "vectors4"
+dir = "05_vectors"
+hint = """
+A range-based for loop uses iterators into the vector, and `push_back` can
+invalidate all of them. Remember the original size first and loop with an index:
+    const std::size_t original_size = numbers.size();
+    for (std::size_t i = 0; i < original_size; ++i) { ... numbers[i] ... }"""
+
+# REFERENCES AND POINTERS
+
+[[exercises]]
+name = "references1"
+dir = "06_references"
+hint = """
+`std::vector<int> scores` is a copy of the caller's vector. The function adds the
+bonus to the copy, which is destroyed at the end of the function. Take the
+parameter by reference: `std::vector<int>& scores`."""
+
+[[exercises]]
+name = "references2"
+dir = "06_references"
+hint = """
+The string literal "pointer" is converted to a temporary `std::string`. A
+non-const reference refuses to bind to a temporary, because changes to it would
+be lost. The function only reads the text, so make it a `const std::string&`."""
+
+[[exercises]]
+name = "references3"
+dir = "06_references"
+hint = """
+Local variables are destroyed when the function returns. Return the string by
+value instead of by reference: change the return type to `std::string`. This
+doesn't create an expensive copy; the string is moved or built in place."""
+
+[[exercises]]
+name = "pointers1"
+dir = "06_references"
+hint = """
+`*a` is the int that `a` points to. You can read and assign through it:
+    int temp = *a;
+    *a = ...;
+You need a temporary variable to not lose one of the values."""
+
+[[exercises]]
+name = "pointers2"
+dir = "06_references"
+hint = """
+Compare the pointer with `nullptr` before using it and return 0 in that case.
+`name->size()` is a shorter way of writing `(*name).size()`."""
+
+[[exercises]]
+name = "pointers3"
+dir = "06_references"
+hint = """
+Change the parameter to `std::span<const int> numbers` (include <span>). A span
+knows its number of elements: use `numbers.size()`, or loop over it with a
+range-based for loop."""
+
+# STRUCTS AND CLASSES
+
+[[exercises]]
+name = "structs1"
+dir = "07_structs"
+hint = """
+Data members are declared like variables inside the struct: `int red;`
+A struct without constructors can be initialized from a braced list in the order
+of its members, `Color green{0, 255, 0};`, or with designated initializers,
+`Point point{.x = 1.5, .y = -2.0};`."""
+
+[[exercises]]
+name = "structs2"
+dir = "07_structs"
+hint = """
+Reorder the designated initializers so they match the order of the members in
+`Order`: `.made_by_email` comes before `.item_number`.
+
+For your order, copy the template with `Order your_order = order_template;` and
+then assign the members that differ."""
+
+[[exercises]]
+name = "structs3"
+dir = "07_structs"
+hint = """
+A member function that doesn't modify the object should be marked `const` after
+its parameter list: `bool is_international() const { ... }`. Only const member
+functions can be called on const objects.
+
+Inside member functions, the members can be used directly by their names, like
+`sender_country`."""
+
+[[exercises]]
+name = "classes1"
+dir = "07_structs"
+hint = """
+Add `public:` before the constructor. Everything after it is public until another
+access specifier like `private:` appears. A common layout is the public interface
+first and the private data at the end of the class."""
+
+[[exercises]]
+name = "classes2"
+dir = "07_structs"
+hint = """
+`bool operator==(const Vec2&) const = default;` inside the struct asks the
+compiler to compare all members.
+
+Operators are functions with special names:
+    Vec2 operator+(Vec2 a, Vec2 b) { return {...}; }
+    Vec2 operator*(Vec2 v, double factor) { ... }"""
+
+# ENUMS
+
+[[exercises]]
+name = "enums1"
+dir = "08_enums"
+hint = """
+List the names used in `describe` inside the braces, separated by commas:
+    enum class Message { Resize, Move, ... };"""
+
+[[exercises]]
+name = "enums2"
+dir = "08_enums"
+strict = true
+hint = """
+The compiler reports that `Direction::West` isn't handled in the switch, and that
+the function can reach its end without returning anything. Add the missing case.
+
+Even with every case handled, the compiler can't be sure that `direction` holds
+one of the named values. After the switch, `std::unreachable();` from <utility>
+tells it that this point is never reached.
+
+Write `turn_right` with a switch as well."""
+
+[[exercises]]
+name = "enums3"
+dir = "08_enums"
+hint = """
+`std::visit` calls the lambda that accepts the alternative currently stored in
+the variant. Add one lambda per alternative to `Overloaded{...}`:
+    [&](const Move& move) { x = move.x; y = move.y; },
+`[&]` lets the lambda change the members of the state.
+The generic lambda `[&](const auto&) {}` accepts every alternative that has no
+lambda of its own. Once every alternative is handled, remove it: then forgetting
+an alternative in the future becomes a compiler error."""
+
+[[exercises]]
+name = "enums4"
+dir = "08_enums"
+hint = """
+Convert explicitly: `std::to_underlying(priority)` from <utility>, or
+`static_cast<int>(priority)`.
+
+`: std::uint8_t` after the enum name sets the underlying type, which decides the
+size of the enum."""
+
+# STRINGS
+
+[[exercises]]
+name = "strings1"
+dir = "09_strings"
+hint = """
+At least one side of `+` must be a `std::string`:
+    std::string greeting = std::string("Hello, ") + "world!";
+With `using namespace std::string_literals;`, the suffix `s` turns a literal into
+a `std::string`: `"Hello, "s`."""
+
+[[exercises]]
+name = "strings2"
+dir = "09_strings"
+hint = """
+`word` and "green" are both pointers to characters. `==` compares the pointers,
+which point to different places in memory even if the text is equal.
+Change the parameter to `std::string_view` (include <string_view>). A string view
+compares the characters, and a `const char*` converts to it."""
+
+[[exercises]]
+name = "strings3"
+dir = "09_strings"
+hint = """
+Useful member functions of `std::string_view` and `std::string`:
+- `find_first_not_of(" \\t\\n")` and `find_last_not_of(...)` for trimming
+- `substr(position, length)`
+- `find(text, start)` returns `npos` when nothing is found
+- `replace(position, length, new_text)` (only on `std::string`)
+A `std::string` can be created from a view: `std::string(input)`."""
+
+[[exercises]]
+name = "strings4"
+dir = "09_strings"
+hint = """
+`{:.2f}` formats a floating-point number with 2 digits after the decimal point.
+`{:<10}` pads to a width of 10 and aligns left, `{:>4}` aligns right.
+Everything outside the braces is copied as is:
+    std::format("${:.2f}", price)"""
+
+# NAMESPACES
+
+[[exercises]]
+name = "namespaces1"
+dir = "10_namespaces"
+hint = """
+`make_sausage` is declared inside the namespace `sausage_factory`. Outside of it,
+the name must be qualified: `sausage_factory::make_sausage()`."""
+
+[[exercises]]
+name = "namespaces2"
+dir = "10_namespaces"
+hint = """
+A namespace alias looks like this:
+    namespace short_name = some::long::name;
+A using declaration brings one name into scope:
+    using some::long::name::THING;"""
+
+[[exercises]]
+name = "namespaces3"
+dir = "10_namespaces"
+hint = """
+Add `using namespace std::chrono_literals;` inside `main` (or above it). Durations
+of different units can be added; the result has the finer unit."""
+
+# MAPS
+
+[[exercises]]
+name = "maps1"
+dir = "11_maps"
+hint = """
+The key is the name of a fruit (`std::string`) and the value is a count (`int`):
+    std::unordered_map<std::string, int> basket;
+Add fruits the same way as the bananas."""
+
+[[exercises]]
+name = "maps2"
+dir = "11_maps"
+hint = """
+`basket[fruit] = 1` overwrites existing counts. Only insert when the key is
+missing. `basket.try_emplace(fruit, 1)` does exactly that, or check first with
+`basket.contains(fruit)`."""
+
+[[exercises]]
+name = "maps3"
+dir = "11_maps"
+hint = """
+`scores[name]` returns a reference to the entry for `name`, creating a
+zero-initialized `TeamScores` if the team isn't in the table yet. Keep the
+reference in a variable and add to its members:
+    TeamScores& team_1 = scores[team_1_name];"""
+
+[[exercises]]
+name = "maps4"
+dir = "11_maps"
+hint = """
+`operator[]` inserts missing keys, so it can't be used on a const map. `find`
+returns an iterator to the entry, or `end()` if the key doesn't exist. The
+iterator points to a pair: `it->first` is the key, `it->second` the value.
+`inventory.at(item)` doesn't insert either, but throws for unknown keys."""
+
+[[exercises]]
+name = "quiz2"
+dir = "quizzes"
+hint = "No hints this time ;)"
+
+# OPTIONAL
+
+[[exercises]]
+name = "optional1"
+dir = "12_optional"
+hint = """
+Returning a plain value from a function that returns `std::optional<int>` wraps
+it in the optional. `return std::nullopt;` returns an empty optional.
+
+In the test, an optional doesn't convert to `int` on its own. `value()` returns
+the contained value (and throws if there is none); `*` returns it without
+checking."""
+
+[[exercises]]
+name = "optional2"
+dir = "12_optional"
+hint = """
+`value_or(fallback)` returns the contained value, or the fallback if the optional
+is empty. The fallback must have the same type as the value, so convert the name:
+`std::string(name)`.
+
+An optional can be used as a condition, true if it holds a value. With an `if`
+initializer, the variable only exists inside the `if`:
+    if (auto nickname = find_nickname(name)) { ... }"""
+
+[[exercises]]
+name = "optional3"
+dir = "12_optional"
+hint = """
+`parse_int(text)` returns an optional. `.and_then(half)` calls `half` with the
+number if there is one; `half` returns an optional itself. Finally,
+`.transform(...)` turns the number into a string with a lambda:
+    [](int n) { return "half is " + std::to_string(n); }"""
+
+# ERROR HANDLING
+
+[[exercises]]
+name = "errors1"
+dir = "13_error_handling"
+hint = """
+`throw` creates an exception object and leaves the function:
+    throw std::invalid_argument("...");
+The constructor argument is the message returned by `what()`."""
+
+[[exercises]]
+name = "errors2"
+dir = "13_error_handling"
+hint = """
+The `catch` blocks are tried in order, and the first one that matches wins.
+`std::invalid_argument` and `std::out_of_range` are derived from
+`std::exception`, so the first handler catches them all. The compiler warns that
+the later handlers can never be reached. Put the most specific handlers first."""
+
+[[exercises]]
+name = "errors3"
+dir = "13_error_handling"
+hint = """
+An exception that isn't caught calls `std::terminate`, which aborts the program.
+Wrap the code that can throw in `try { ... }` and add a
+`catch (const std::invalid_argument& error) { ... }` block that prints a message.
+Don't subtract any tokens when the input is invalid."""
+
+[[exercises]]
+name = "errors4"
+dir = "13_error_handling"
+hint = """
+Check the value before constructing the object. An error is returned with
+`std::unexpected(...)`:
+    if (value < 0) {
+        return std::unexpected(CreationError::Negative);
+    }"""
+
+[[exercises]]
+name = "errors5"
+dir = "13_error_handling"
+hint = """
+`parse_long(text)` returns a `std::expected<long, std::string>`. `and_then(f)`
+calls `f` with the value only if there is one, and otherwise returns the error
+unchanged. `f` must return an expected with the same error type, which
+`PositiveNonzeroInteger::create` does:
+    return parse_long(text).and_then(PositiveNonzeroInteger::create);"""
+
+[[exercises]]
+name = "errors6"
+dir = "13_error_handling"
+hint = """
+`catch (std::exception error)` copies the caught exception into a new
+`std::exception` object. Only the base part is copied ("object slicing"), so the
+message of `InsufficientFunds` is lost. Catch by reference instead:
+`catch (const std::exception& error)`."""
+
+# TEMPLATES
+
+[[exercises]]
+name = "templates1"
+dir = "14_templates"
+hint = """
+Put `template <typename T>` in front of the function and replace `int` with `T`.
+The compiler deduces `T` from the arguments. Taking the parameters as
+`const T&` avoids copying strings."""
+
+[[exercises]]
+name = "templates2"
+dir = "14_templates"
+hint = """
+Put `template <typename T>` in front of the struct and use `T` as the type of
+`value`. `Wrapper<int>` and `Wrapper<std::string>` are then two different types
+generated from the same template."""
+
+[[exercises]]
+name = "templates3"
+dir = "14_templates"
+hint = """
+A template can have a value parameter as well as type parameters:
+    template <typename T, std::size_t N>
+    T sum(const std::array<T, N>& values)
+Start the total at `T{}`, which is zero for numbers."""
+
+[[exercises]]
+name = "templates4"
+dir = "14_templates"
+hint = """
+Replace `if` with `if constexpr` (and `else if` with `else if constexpr`). The
+condition must be known at compile time, which the type traits are. Branches
+that aren't taken are discarded for that `T` and don't need to compile."""
+
+# CONCEPTS AND POLYMORPHISM
+
+[[exercises]]
+name = "concepts1"
+dir = "15_concepts"
+hint = """
+A `requires` expression lists expressions that must be valid for a type:
+    template <typename T>
+    concept Shape = requires(const T& shape) {
+        { shape.area() } -> std::convertible_to<double>;
+    };
+The part after `->` additionally constrains the type of the expression."""
+
+[[exercises]]
+name = "concepts2"
+dir = "15_concepts"
+hint = """
+Replace `typename` with a concept: `template <std::integral T>`.
+Without the constraint, a call like `gcd(1.5, 2.5)` looks valid from the outside;
+only the body fails to compile. With it, the call itself is rejected, and the
+concept `HasGcd` in the test sees that."""
+
+[[exercises]]
+name = "concepts3"
+dir = "15_concepts"
+hint = """
+Mark the base class function as `virtual`. Then the function of the actual
+object's type is called, even through a base class reference or pointer. Mark
+the function in the derived class with `override`."""
+
+[[exercises]]
+name = "concepts4"
+dir = "15_concepts"
+hint = """
+`unique_ptr<Connection>` deletes the object through a `Connection*`. If the
+destructor of `Connection` isn't virtual, only that destructor runs, and the one
+of `DatabaseConnection` is skipped (formally, it's undefined behavior).
+Make the base class destructor `virtual`."""
+
+[[exercises]]
+name = "concepts5"
+dir = "15_concepts"
+hint = """
+`override` asks the compiler to check that the function really overrides a
+virtual function of the base class. Here it doesn't: the base function is
+`const`, the derived one isn't. So it's a new, unrelated function which hides the
+base one. Add `const` to match the base signature."""
+
+[[exercises]]
+name = "quiz3"
+dir = "quizzes"
+hint = "No hints this time ;)"
+
+# RAII AND LIFETIMES
+
+[[exercises]]
+name = "raii1"
+dir = "16_raii"
+hint = """
+A destructor has the name of the class with a `~` in front, no parameters and no
+return type:
+    ~File() { ... }
+It runs automatically when the object goes out of scope, also when the scope is
+left because of an exception."""
+
+[[exercises]]
+name = "raii2"
+dir = "16_raii"
+hint = """
+The copy constructor `Buffer(const Buffer& other)` allocates new memory and
+copies the elements (`std::copy` from <algorithm>).
+The copy assignment operator `Buffer& operator=(const Buffer& other)` must also
+free the old memory. The copy-and-swap idiom handles that elegantly: take the
+parameter by value (which copies it) and swap the members with it.
+Alternatively, follow the rule of zero: store a `std::vector<int>` instead."""
+
+[[exercises]]
+name = "raii3"
+dir = "16_raii"
+hint = """
+Replace `lock()` and `unlock()` with a lock guard at the beginning of the function:
+    std::lock_guard lock(account_mutex);
+Its constructor locks the mutex and its destructor unlocks it."""
+
+[[exercises]]
+name = "lifetimes1"
+dir = "16_raii"
+hint = """
+Store the result in a `std::string`, which owns its characters. A
+`std::string_view` is great for parameters, but it must never outlive the string
+it looks at."""
+
+[[exercises]]
+name = "lifetimes2"
+dir = "16_raii"
+hint = """
+`prefix_` refers to the local variable `prefix` of `make_logger`, which is
+destroyed when `make_logger` returns. Store a `std::string` in the class instead
+of a reference. Taking the constructor parameter by value and moving it into the
+member avoids an extra copy."""
+
+# TESTS
+
+[[exercises]]
+name = "tests1"
+dir = "17_tests"
+hint = """
+`CHECK` expects a condition that should be true, e.g. `CHECK(is_even(4));`.
+To check that something is false, negate it: `CHECK(!is_even(5));`."""
+
+[[exercises]]
+name = "tests2"
+dir = "17_tests"
+hint = """
+`CHECK_EQ(actual, expected)` compares the result of a call with the value you
+expect, e.g. `CHECK_EQ(power_of_2(3), 8u);`. If they differ, both values are
+printed."""
+
+[[exercises]]
+name = "tests3"
+dir = "17_tests"
+hint = """
+Use the member functions `width()` and `height()` in the first test.
+
+For the other tests, the constructor throws, so the test itself would fail with
+an unexpected exception. Wrap the construction in a check that expects it:
+    CHECK_THROWS_AS(Rectangle(-10, 10), std::invalid_argument);"""
+
+# MOVE SEMANTICS
+
+[[exercises]]
+name = "move_semantics1"
+dir = "18_move_semantics"
+hint = """
+`std::move(vec0)` allows `fill_vec` to take over the elements of `vec0`, which is
+left empty. If `vec0` is still needed afterwards, pass it without `std::move`:
+the parameter is then initialized with a copy."""
+
+[[exercises]]
+name = "move_semantics2"
+dir = "18_move_semantics"
+hint = """
+A `unique_ptr` is the single owner of its object, so it can't be copied, only
+moved. Use `std::move` in both places: when calling `add`, and when pushing the
+parameter into the vector. Afterwards, the moved-from pointer is null."""
+
+[[exercises]]
+name = "move_semantics3"
+dir = "18_move_semantics"
+hint = """
+The move constructor takes an rvalue reference and moves each member:
+    Buffer(Buffer&& other) noexcept : data_(std::move(other.data_)) {}
+Write the move assignment operator the same way.
+
+Without `noexcept`, the vector still copies its elements when it grows, because a
+move that throws halfway would leave it broken."""
+
+[[exercises]]
+name = "move_semantics4"
+dir = "18_move_semantics"
+hint = """
+Inside the function, `arg` is always an lvalue. `std::forward<Arg>(arg)` casts it
+back to an rvalue only if the caller passed an rvalue ("perfect forwarding"):
+    new T(std::forward<Arg>(arg))
+`std::make_unique` works exactly like this, with any number of arguments."""
+
+# SMART POINTERS
+
+[[exercises]]
+name = "unique_ptr1"
+dir = "19_smart_pointers"
+hint = """
+Change the member to `std::unique_ptr<Node> next;`. The struct is then as big as
+an int plus a pointer.
+
+Build the list from the back: create the node 3, then the node 2 which owns node
+3, then node 1. `std::make_unique<Node>(value, std::move(next))` creates a node.
+A `unique_ptr` must be moved into the next node since it can't be copied."""
+
+[[exercises]]
+name = "unique_ptr2"
+dir = "19_smart_pointers"
+hint = """
+Replace the raw pointer with `auto sensor = std::make_unique<Sensor>();` and
+remove the `delete`. The unique_ptr deletes the sensor when it goes out of
+scope, no matter which `return` is taken."""
+
+[[exercises]]
+name = "shared_ptr1"
+dir = "19_smart_pointers"
+hint = """
+`std::make_shared<Sun>()` creates a new, separate sun. To share the existing one,
+copy the `shared_ptr` `sun`, which increases its use count. When a copy is
+destroyed or reset with `reset()`, the count goes down again."""
+
+[[exercises]]
+name = "weak_ptr1"
+dir = "19_smart_pointers"
+hint = """
+Change the type of `parent` to `std::weak_ptr<TreeNode>`. A weak pointer doesn't
+count as an owner, so the root is destroyed when the last `shared_ptr` to it is
+gone, and the leaf after it.
+
+A weak pointer can't be used directly. `node.parent.lock()` returns a
+`shared_ptr` to the parent, which is empty if there is no parent."""
+
+# LAMBDAS
+
+[[exercises]]
+name = "lambdas1"
+dir = "20_lambdas"
+hint = """
+A lambda looks like a function without a name:
+    [captures](parameters) { body }
+For example: `[](int n) { return n * n; }`.
+Put `limit` into the square brackets to capture it."""
+
+[[exercises]]
+name = "lambdas2"
+dir = "20_lambdas"
+hint = """
+`[count]` copies `count` into the lambda; `mutable` only allows changing that
+copy. Capture it by reference with `[&count]` instead.
+
+For the second test, it's the other way around: `[&price]` always reads the
+current value. Capture by value to keep the value from when the lambda was
+created."""
+
+[[exercises]]
+name = "lambdas3"
+dir = "20_lambdas"
+hint = """
+Return a lambda that captures `factor` by value: `[factor](int n) { ... }`. The
+lambda is converted to `std::function<int(int)>` automatically.
+
+Calling an empty `std::function` throws `std::bad_function_call`, which is what
+the test reports right now."""
+
+# ALGORITHMS AND RANGES
+
+[[exercises]]
+name = "algorithms1"
+dir = "21_algorithms"
+hint = """
+The comparison lambda answers "does `a` come before `b`?". Oldest first means a
+bigger age comes first: `a.age > b.age`. When the ages are equal, compare the
+names instead."""
+
+[[exercises]]
+name = "algorithms2"
+dir = "21_algorithms"
+hint = """
+`map | std::views::values` is a view of just the values of the map.
+`std::ranges::count(range, value)` counts the elements equal to `value`. It
+returns a difference type, so convert the result with `static_cast<int>`.
+
+`std::transform_reduce(begin, end, init, reduce, transform)` calls `transform` on
+every element and combines the results with `reduce`, starting from `init`:
+    std::transform_reduce(collection.begin(), collection.end(), 0, std::plus{},
+                          [value](const ProgressMap& map) { ... });"""
+
+[[exercises]]
+name = "algorithms3"
+dir = "21_algorithms"
+hint = """
+`std::remove_if` works on iterators and can't change the size of the vector. It
+moves the elements to keep to the front and returns an iterator to the new end;
+the compiler warns that this return value is ignored. `std::erase_if(numbers,
+predicate)` (C++20) removes the elements for real."""
+
+[[exercises]]
+name = "ranges1"
+dir = "21_algorithms"
+hint = """
+For the first character: `static_cast<char>(std::toupper(static_cast<unsigned
+char>(input.front())))`, then append `input.substr(1)`.
+
+`words | std::views::transform(capitalize_first)` is a view of capitalized
+words. `| std::ranges::to<std::vector>()` collects it into a vector.
+`std::views::join` flattens a range of strings into a range of characters, which
+can be collected with `std::ranges::to<std::string>()`."""
+
+[[exercises]]
+name = "ranges2"
+dir = "21_algorithms"
+hint = """
+`std::views::iota(a, b)` is the range a, a+1, …, b-1. Both arguments should have
+the same type, e.g. `std::uint64_t{1}` and `num + 1`.
+`std::ranges::fold_left(range, init, op)` from <algorithm> combines all elements with `op`,
+starting from `init`. `std::multiplies{}` multiplies two numbers.
+
+For `even_squares`, chain the views with `|`. `std::views::take` expects a signed
+count, so convert `limit` with `static_cast<std::ptrdiff_t>`."""
+
+# THREADS
+
+[[exercises]]
+name = "threads1"
+dir = "22_threads"
+hint = """
+Call `join()` on every thread in `handles` before reading `results`:
+    for (std::thread& handle : handles) {
+        handle.join();
+    }"""
+
+[[exercises]]
+name = "threads2"
+dir = "22_threads"
+sanitizer = "thread"
+hint = """
+Add a `std::mutex mutex;` member to `Account`. At the beginning of `deposit`,
+lock it for the rest of the function:
+    std::lock_guard lock(account.mutex);
+Then only one thread at a time can read and write the balance.
+
+If ThreadSanitizer is available, cpplings uses it for this exercise and it
+reports the data race even when the result happens to be right."""
+
+[[exercises]]
+name = "threads3"
+dir = "22_threads"
+hint = """
+`wait` has an overload that takes a condition. It only sleeps while the condition
+is false, and checks it again after every wake-up:
+    queue_changed.wait(lock, [] { return !jobs.empty() || producer_done; });"""
+
+# COMPILE-TIME PROGRAMMING
+
+[[exercises]]
+name = "macros1"
+dir = "23_compile_time"
+hint = """
+The preprocessor replaces text: `SQUARE(1 + 2)` becomes `1 + 2 * 1 + 2`, which is
+5. And `SQUARE(4) / SQUARE(2)` becomes `4 * 4 / 2 * 2`.
+Put parentheses around every use of the parameter and around the whole
+expansion: `((x) * (x))`."""
+
+[[exercises]]
+name = "macros2"
+dir = "23_compile_time"
+hint = """
+`MAX(next_id(), 50)` expands to `((next_id()) > (50) ? (next_id()) : (50))`, so
+`next_id()` runs twice. A function evaluates each argument once:
+    template <typename T>
+    constexpr T max_of(T a, T b) { return a > b ? a : b; }
+Replace the uses of the macro with it."""
+
+[[exercises]]
+name = "constexpr1"
+dir = "23_compile_time"
+hint = """
+`static_assert` and the size of a `std::array` need values known at compile
+time. Mark the function `constexpr`. It can still be called at runtime with
+values that are only known then, as in the last test."""
+
+[[exercises]]
+name = "constexpr2"
+dir = "23_compile_time"
+hint = """
+Replace `constexpr` with `consteval`. Every call is now evaluated by the
+compiler, and reaching the `throw` becomes a compiler error pointing at the bad
+call. Admin panels often run on port 8080."""
+
+# WARNINGS
+
+[[exercises]]
+name = "warnings1"
+dir = "24_warnings"
+strict = true
+hint = """
+`values.size()` is unsigned, while `i` is a signed `int`. Comparing them converts
+the signed value to unsigned, which goes wrong for negative values. The simplest
+fix avoids the index: `for (int value : values)`. Or use `std::size_t i`."""
+
+[[exercises]]
+name = "warnings2"
+dir = "24_warnings"
+strict = true
+hint = """
+Converting `double` to `long` cuts off the fractional part, so 1795.5 becomes
+1795 instead of 1796. `std::lround` from <cmath> rounds to the nearest integer
+and returns a `long`. The multiplication converts
+`price_in_cents` to `double` implicitly, which `-Wconversion` also reports; write
+`static_cast<double>(price_in_cents)`."""
+
+[[exercises]]
+name = "warnings3"
+dir = "24_warnings"
+strict = true
+hint = """
+Inside the constructor, the parameters `width` and `height` shadow the members, so
+`width = width` assigns the parameter to itself and the member stays 0.
+Initialize the members in a member initializer list and give them different
+names, e.g. `width_`:
+    Rectangle(int width, int height) : width_(width), height_(height) {}"""
+
+[[exercises]]
+name = "warnings4"
+dir = "24_warnings"
+strict = true
+hint = """
+`stock = 0` assigns 0 to `stock` and the condition is then false. The compiler
+suggests extra parentheses to silence the warning when an assignment is
+intended. Here a comparison was intended: `==`."""
+
+# CONVERSIONS
+
+[[exercises]]
+name = "casts1"
+dir = "25_conversions"
+hint = """
+In `total / values.size()`, the `int` is converted to the unsigned
+`std::size_t`: -9 becomes 18446744073709551607. The division is an integer
+division, too. Convert both operands to `double` first:
+    static_cast<double>(total) / static_cast<double>(values.size())"""
+
+[[exercises]]
+name = "conversions1"
+dir = "25_conversions"
+hint = """
+`text.find(',')` returns the position of the first comma or
+`std::string_view::npos`. Check that there's no second comma with
+`text.find(',', comma + 1)`. `substr` gives the parts before and after it.
+
+`std::from_chars(first, last, value)` returns the position where parsing stopped
+and an error code. Parsing succeeded if the error is `std::errc{}` and the whole
+part was used.
+
+Returning early from the constructor keeps the default values of the members.
+Put `explicit` in front of the constructor."""
+
+[[exercises]]
+name = "conversions2"
+dir = "25_conversions"
+hint = """
+A conversion operator has no return type in front; the type is its name:
+    explicit operator double() const { ... }
+Convert numerator and denominator to `double` before dividing.
+`explicit operator bool() const` is still used automatically in conditions, and
+by `!` and `&&`, but not in arithmetic or assignments."""
