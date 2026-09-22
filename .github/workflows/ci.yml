@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: dev check (${{ matrix.cxx }})
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+      # LeakSanitizer needs ptrace.
+      options: --cap-add SYS_PTRACE
+    strategy:
+      fail-fast: false
+      matrix:
+        cxx: [g++, clang++]
+    steps:
+      - name: Install toolchain
+        run: >
+          dnf install -y --setopt=install_weak_deps=False
+          gcc-c++ clang compiler-rt cmake ninja-build git
+          libasan libubsan libtsan
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        env:
+          CXX: ${{ matrix.cxx }}
+        run: |
+          cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_COMPILE_WARNING_AS_ERROR=ON
+          cmake --build build
+
+      - name: Check exercises and solutions
+        env:
+          CXX: ${{ matrix.cxx }}
+        run: |
+          ./build/cpplings dev check
+          cat .cpplings/toolchain
+
+      - name: Initialize and run an exercise
+        env:
+          CXX: ${{ matrix.cxx }}
+        run: |
+          cd "$RUNNER_TEMP"
+          echo | "$GITHUB_WORKSPACE/build/cpplings" init
+          cd cpplings
+          echo | "$GITHUB_WORKSPACE/build/cpplings" run intro1
+          ! "$GITHUB_WORKSPACE/build/cpplings" run intro2
