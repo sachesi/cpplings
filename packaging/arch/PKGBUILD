@@ -2,7 +2,7 @@
 
 # The release workflow sets pkgver to the tag it builds.
 pkgname=cpplings
-pkgver=0.1.0
+pkgver=0.2.0
 pkgrel=1
 pkgdesc='Small exercises to get you used to reading and writing modern C++'
 arch=('x86_64' 'aarch64')

@@ -1,6 +1,6 @@
 Name:           cpplings
 # The release workflow sets Version to the tag it builds.
-Version:        0.1.0
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Small exercises to get you used to reading and writing modern C++
 
@@ -48,5 +48,8 @@ echo | %{buildroot}%{_bindir}/%{name} run intro1
 %{_bindir}/%{name}
 
 %changelog
+* Wed Sep 23 2026 sachesi <xsachesi@pm.me> - 0.2.0-1
+- Update to 0.2.0.
+
 * Wed Sep 23 2026 sachesi <xsachesi@pm.me> - 0.1.0-1
 - Initial package.
