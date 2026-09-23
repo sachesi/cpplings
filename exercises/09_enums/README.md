@@ -11,7 +11,8 @@ compiler reports values that aren't handled, which is a good reason to not add a
 
 When different alternatives carry different data, `std::variant` holds exactly
 one of several types, and `std::visit` calls the right code for the alternative
-it currently holds.
+it currently holds. `std::holds_alternative` checks for an alternative, and
+`std::get` throws when asked for the wrong one.
 
 ## Further information
 
