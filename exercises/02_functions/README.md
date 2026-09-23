@@ -8,9 +8,14 @@ The compiler reads a file from top to bottom, so a function must be declared
 before it is called. A declaration without a body (a "prototype") is enough;
 the definition can come later.
 
+Several functions can share a name when their parameters differ (overloading),
+and a function can call itself (recursion) as long as it eventually stops.
+
 ## Further information
 
 - [Introduction to functions](https://www.learncpp.com/cpp-tutorial/introduction-to-functions/)
 - [Function return values](https://www.learncpp.com/cpp-tutorial/function-return-values-value-returning-functions/)
 - [Forward declarations](https://www.learncpp.com/cpp-tutorial/forward-declarations-and-definitions/)
 - [Default arguments](https://www.learncpp.com/cpp-tutorial/default-arguments/)
+- [Function overloading](https://www.learncpp.com/cpp-tutorial/introduction-to-function-overloading/)
+- [Recursion](https://www.learncpp.com/cpp-tutorial/recursion/)

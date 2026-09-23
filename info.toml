@@ -98,6 +98,23 @@ hint = """
 the compiler reports this "narrowing conversion" as an error. `double` holds
 floating-point numbers."""
 
+[[exercises]]
+name = "variables8"
+dir = "01_variables"
+hint = """
+After `left = right;`, the old value of `left` is gone. Keep a copy in a third
+variable first:
+    int saved = left;
+Then use `saved` where the old value of `left` is needed."""
+
+[[exercises]]
+name = "variables9"
+dir = "01_variables"
+hint = """
+`auto` takes the type of the initializer. `0` is an `int`, so `distance` is an
+`int` and adding `2.5` to it drops the fractional part. Initialize it with a
+`double` literal like `0.0` instead."""
+
 # FUNCTIONS
 
 [[exercises]]
@@ -152,6 +169,30 @@ Put a declaration of `greet` above `main`. It looks like the first line of the
 definition, ending with a semicolon instead of a body:
     void greet(const char* name);"""
 
+[[exercises]]
+name = "functions7"
+dir = "02_functions"
+hint = """
+This is called overloading. Define another function with the same name and
+different parameter types:
+    double add(double a, double b) { ... }
+The compiler picks the one that fits the arguments of each call."""
+
+[[exercises]]
+name = "functions8"
+dir = "02_functions"
+hint = """
+A default argument is written after the parameter:
+    std::string_view punctuation = "!"
+Only trailing parameters can have defaults."""
+
+[[exercises]]
+name = "functions9"
+dir = "02_functions"
+hint = """
+A recursive function needs a base case that returns without calling itself.
+Here, that is `0! = 1`. Check for it with an `if` before the recursive call."""
+
 # IF
 
 [[exercises]]
@@ -190,6 +231,32 @@ hint = """
 Every `case` that should stop needs a `break;`. Without it, the program continues
 executing the statements of the next case ("fallthrough"). The compiler warns
 "this statement may fall through"."""
+
+[[exercises]]
+name = "if4"
+dir = "03_if"
+hint = """
+Translate the rule piece by piece: "divisible by 4 and not by 100" or
+"divisible by 400". `&&` binds more tightly than `||`, but parentheses make the
+intent clear:
+    (A && B) || C"""
+
+[[exercises]]
+name = "if5"
+dir = "03_if"
+hint = """
+`unread = 0` assigns 0 to `unread`, and the result of the assignment, 0, is
+used as the condition, which is false. Comparison is written with `==`."""
+
+[[exercises]]
+name = "switch2"
+dir = "03_if"
+hint = """
+Labels can be stacked on top of each other so that they share the statements
+below:
+    case 'a':
+    case 'e':
+        return true;"""
 
 [[exercises]]
 name = "quiz1"
@@ -263,6 +330,29 @@ dir = "04_primitive_types"
 hint = """
 Tuple elements are accessed with `std::get<INDEX>(tuple)`. The index goes between
 the angle brackets because it must be known at compile time."""
+
+[[exercises]]
+name = "primitive_types9"
+dir = "04_primitive_types"
+hint = """
+Compare the distance between the two numbers with a small tolerance:
+    std::abs(a - b) < 1e-9
+`std::abs` for floating-point numbers comes from <cmath>."""
+
+[[exercises]]
+name = "primitive_types10"
+dir = "04_primitive_types"
+hint = """
+`a | b` turns on every bit that is on in `a` or in `b`. `a & b` keeps only the
+bits that are on in both. If `permissions & wanted` equals `wanted`, all wanted
+bits are on."""
+
+[[exercises]]
+name = "primitive_types11"
+dir = "04_primitive_types"
+hint = """
+`std::lround` from <cmath> rounds to the nearest integer, halves away from
+zero, and returns a `long`."""
 
 # VECTORS
 
