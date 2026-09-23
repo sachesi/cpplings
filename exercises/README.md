@@ -8,6 +8,7 @@ that fits well next to these exercises.
 | variables         | 1, 5                 |
 | functions         | 2                    |
 | if                | 4, 8                 |
+| loops             | 8                    |
 | primitive_types   | 4, 17                |
 | vectors           | 16                   |
 | references        | 12                   |

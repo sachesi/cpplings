@@ -8,6 +8,7 @@ C++ has several ways to deal with text:
   expect: `+`, `==`, `find`, `substr`, `replace`, ...
 - `std::string_view` is a cheap, read-only view into characters owned by
   something else. It's the usual type for string parameters that are only read.
+  A view must not outlive the string it points into.
 
 `std::format` (C++20) builds strings from a format string with `{}` placeholders,
 and `std::println` (C++23) prints the result directly.

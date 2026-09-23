@@ -11,7 +11,11 @@ A vector moves its elements to a bigger buffer when it grows. Iterators,
 references and pointers to the old elements then point to freed memory and must
 not be used anymore. cpplings compiles with the checked debug mode of the
 standard library, which aborts the program when this happens and when an index
-is out of bounds.
+is out of bounds. `erase` invalidates iterators too; `std::erase_if` removes
+elements without a hand-written loop.
+
+`reserve` only allocates memory for future elements. The vector's size, and with
+it the valid indices, stay the same.
 
 ## Further information
 
